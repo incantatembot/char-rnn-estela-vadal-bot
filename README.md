@@ -16,10 +16,10 @@ Follow her at https://twitter.com/estelavadal.
         * `self.config['CHARRNN_PATH']`
         * `self.config['RNN_MODEL_PATH']`
 4. If you want to run your own Twitter bot, you'll need to plug-in your own access keys (check this [guide](https://themepacific.com/how-to-generate-api-key-consumer-token-access-key-for-twitter-oauth/994/) for more details) to estelavadal.py:
-    * self.config['api_key'] = ''<YOUR TWITTER API KEY>''
-    * self.config['api_secret'] = ''<YOUR TWITTER API SECRET>''
-    * self.config['access_key'] = '<YOUR TWITTER ACCESS KEY>'
-    * self.config['access_secret'] = '<YOUR TWITTER ACCESS SECRET>'
+    * self.config['api_key'] = 'YOUR TWITTER API KEY'
+    * self.config['api_secret'] = 'YOUR TWITTER API SECRET'
+    * self.config['access_key'] = 'YOUR TWITTER ACCESS KEY'
+    * self.config['access_secret'] = 'YOUR TWITTER ACCESS SECRET'
 
 ## Usage
 To generate text:
