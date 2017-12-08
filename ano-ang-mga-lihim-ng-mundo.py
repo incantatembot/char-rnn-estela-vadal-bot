@@ -37,7 +37,7 @@ def is_sentence_valid(sentence):
     # compare against our dictionary
     for word in word_list:
         if word not in config['VALID_WORDS']: 
-            print "Invalid word found: [" + str(word) + "] in: [" + str(sentence) + "]"
+            # print "Invalid word found: [" + str(word) + "] in: [" + str(sentence) + "]"
             return False
 
     return True
