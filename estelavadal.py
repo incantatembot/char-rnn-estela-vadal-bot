@@ -73,6 +73,8 @@ class EstelaVadal(TwitterBot):
         # maximum tweet length
         self.config['NUM_SKIP_LINES'] = 1
 
+        # load dictionary of valid words
+        self.config['VALID_WORDS'] = set(line.strip() for line in open('dictionary.txt'))
 
         ###########################################
         # CUSTOM: your bot's own state variables! #
@@ -173,6 +175,21 @@ class EstelaVadal(TwitterBot):
         # if something:
         #     self.favorite_tweet(tweet)
 
+    def is_sentence_valid(self, sentence):
+        sentence_temp = str(sentence)
+        # strip all punctuations, convert to lowercase
+        sentence_temp = sentence_temp.translate(None, string.punctuation)
+        sentence_temp = sentence_temp.lower()
+        word_list = sentence_temp.split()
+
+        # compare against our dictionary
+        for word in word_list:
+            if word not in self.config['VALID_WORDS']: 
+                print("Invalid word found: [" + str(word) + "] in: [" + str(sentence) + "]")
+                return False
+
+        return True
+
     def generate_poetry(self):
         unique_chars_list = ['A', 'C', 'B', 'E', 'D', 'G', 'F', 'I', 'H', 'K', 'J', 'M', 'L', 'O', 'N', 'Q', 'P', 'S', 'R', 'U', 'T', 'W', 'V', 'Y', 'Z', 'a', 'c', 'b', 'e', 'd', 'g', 'f', 'i', 'h', 'k', 'j', 'm', 'l', 'o', 'n', 'q', 'p', 's', 'r', 'u', 't', 'w', 'v', 'y', 'z']
         seedTextA = ''.join([random.choice(unique_chars_list) for n in xrange(randint(2, 7))])
@@ -197,7 +214,7 @@ class EstelaVadal(TwitterBot):
             'sample.lua',
             self.config['RNN_MODEL_PATH'],
             '-length',
-            '1024',
+            '2048',
             '-verbose',
             '0',
             '-temperature',
@@ -233,7 +250,8 @@ class EstelaVadal(TwitterBot):
                 
             # if we still have space, append
             if i >= self.config['NUM_SKIP_LINES'] and self.config['MAX_TWEET_LENGTH'] >= len(line):
-                poetic_lines.append(u''+line)
+                if self.is_sentence_valid(line):
+                    poetic_lines.append(u''+line)
 
         # print "TWEETS:"
         # print repr(poetic_lines)
@@ -250,7 +268,7 @@ class EstelaVadal(TwitterBot):
             self.state['lines_of_poetry_counter'] = 0
 
         while (len(self.state['lines_of_poetry']) == 0):
-            print "GENERATING POETRY..."
+            # print "GENERATING POETRY..."
             self.state['lines_of_poetry'] = self.generate_poetry()
             self.state['lines_of_poetry_counter'] = 0
 

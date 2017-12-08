@@ -17,8 +17,32 @@ config = {}
 config['SCRIPT_PATH'] = '/home/estelavadal'
 config['CHARRNN_PATH'] = '/home/estelavadal/char-rnn'
 config['RNN_MODEL_PATH'] = '/home/estelavadal/models/estela.v.808.t7'
-config['MAX_LINE_LENGTH'] = 200
+config['MAX_LINE_LENGTH'] = 500
 config['NUM_SKIP_LINES'] = 1
+
+config['VALID_WORDS'] = []
+
+config['VALID_WORDS'] = set(line.strip() for line in open('dictionary.txt'))
+
+#print "VALID WORDS:"
+#print config['VALID_WORDS']
+
+def is_sentence_valid(sentence):
+    sentence_temp = str(sentence)
+    # strip all punctuations, convert to lowercase
+    sentence_temp = sentence_temp.translate(None, string.punctuation)
+    sentence_temp = sentence_temp.lower()
+    word_list = sentence_temp.split()
+
+    # compare against our dictionary
+    for word in word_list:
+        if word not in config['VALID_WORDS']: 
+            print "Invalid word found: [" + str(word) + "] in: [" + str(sentence) + "]"
+            return False
+
+    return True
+
+
 
 def generate_poetry():
     unique_chars_list = ['A', 'C', 'B', 'E', 'D', 'G', 'F', 'I', 'H', 'K', 'J', 'M', 'L', 'O', 'N', 'Q', 'P', 'S', 'R', 'U', 'T', 'W', 'V', 'Y', 'Z', 'a', 'c', 'b', 'e', 'd', 'g', 'f', 'i', 'h', 'k', 'j', 'm', 'l', 'o', 'n', 'q', 'p', 's', 'r', 'u', 't', 'w', 'v', 'y', 'z']
@@ -80,7 +104,8 @@ def generate_poetry():
             
         # if we still have space, append
         if i >= config['NUM_SKIP_LINES'] and config['MAX_LINE_LENGTH'] >= len(line):
-            poetic_lines.append(u''+line)
+            if is_sentence_valid(line):
+                poetic_lines.append(u''+line)
 
     # print "TWEETS:"
     # print repr(poetic_lines)
