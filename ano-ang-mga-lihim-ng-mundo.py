@@ -68,7 +68,7 @@ def generate_poetry():
         'sample.lua',
         config['RNN_MODEL_PATH'],
         '-length',
-        '1024',
+        '2048',
         '-verbose',
         '0',
         '-temperature',
