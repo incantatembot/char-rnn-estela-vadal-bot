@@ -16,7 +16,7 @@ import string
 config = {}
 config['SCRIPT_PATH'] = '/home/estelavadal'
 config['CHARRNN_PATH'] = '/home/estelavadal/char-rnn'
-config['RNN_MODEL_PATH'] = '/home/estelavadal/models/estela.v.808.t7'
+config['RNN_MODEL_PATH'] = '/home/estelavadal/models/estela.v.809.t7'
 config['MAX_LINE_LENGTH'] = 500
 config['NUM_SKIP_LINES'] = 1
 

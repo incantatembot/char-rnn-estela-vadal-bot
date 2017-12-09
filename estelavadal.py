@@ -65,7 +65,7 @@ class EstelaVadal(TwitterBot):
         self.config['CHARRNN_PATH'] = '/home/estelavadal/char-rnn'
 
         # char-rnn model location
-        self.config['RNN_MODEL_PATH'] = '/home/estelavadal/models/estela.v.808.t7'
+        self.config['RNN_MODEL_PATH'] = '/home/estelavadal/models/estela.v.809.t7'
 
         # maximum tweet length
         self.config['MAX_TWEET_LENGTH'] = 200
