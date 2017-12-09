@@ -1,5 +1,5 @@
 # char-rnn-estela-vadal-bot
-A Multi-layer Recurrent Neural Networks (LSTM) Twitter bot that generates character-level poetry in Filipino.
+A Multi-layer [Recurrent Neural Networks (LSTM)](http://karpathy.github.io/2015/05/21/rnn-effectiveness/) Twitter bot that generates poetry in Filipino.
 
 Follow her at https://twitter.com/estelavadal.
 
