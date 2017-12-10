@@ -15,7 +15,7 @@ Follow her at https://twitter.com/estelavadal.
         * `self.config['SCRIPT_PATH']`
         * `self.config['CHARRNN_PATH']`
         * `self.config['RNN_MODEL_PATH']`
-4. If you want to run your own Twitter bot, you'll need to plug-in your own access keys (check this [guide](https://themepacific.com/how-to-generate-api-key-consumer-token-access-key-for-twitter-oauth/994/) for more details) to estelavadal.py:
+4. If you want to run your own Twitter bot, edit estelavadal.py and provide your own Twitter access keys (check this [guide](https://themepacific.com/how-to-generate-api-key-consumer-token-access-key-for-twitter-oauth/994/) for more details):
     * self.config['api_key'] = 'YOUR TWITTER API KEY'
     * self.config['api_secret'] = 'YOUR TWITTER API SECRET'
     * self.config['access_key'] = 'YOUR TWITTER ACCESS KEY'
@@ -26,6 +26,6 @@ To generate text:
 
     $ python ano-ang-mga-lihim-ng-mundo.py
     
-To run the twitter bot:
+To run the Twitter bot:
 
     $ python estelavadal.py
