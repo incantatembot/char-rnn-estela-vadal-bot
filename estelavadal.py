@@ -65,12 +65,12 @@ class EstelaVadal(TwitterBot):
         self.config['CHARRNN_PATH'] = '/home/estelavadal/char-rnn'
 
         # char-rnn model location
-        self.config['RNN_MODEL_PATH'] = '/home/estelavadal/models/estela.v.809.t7'
+        self.config['RNN_MODEL_PATH'] = '/home/estelavadal/models/estela.v.810.t7'
 
         # maximum tweet length
         self.config['MAX_TWEET_LENGTH'] = 200
 
-        # maximum tweet length
+        # skip the first line since that will contain rubbish (seed text)
         self.config['NUM_SKIP_LINES'] = 1
 
         # load dictionary of valid words
@@ -95,8 +95,6 @@ class EstelaVadal(TwitterBot):
         # line here:
         
         # self.register_custom_handler(self.my_function, 60 * 60 * 24)
-        
-        self.get_poetic_line()
 
 
     def on_scheduled_tweet(self):
@@ -109,8 +107,7 @@ class EstelaVadal(TwitterBot):
         """
         text = self.get_poetic_line()
         self.post_tweet(text)
-        # print "on_scheduled_tweet: " + text
-        # self.post_tweet(text)
+
 
     def on_mention(self, tweet, prefix):
         """
@@ -131,17 +128,7 @@ class EstelaVadal(TwitterBot):
         """
         
         text = self.get_poetic_line()
-        prefixed_text = prefix + ' ' + text
         self.post_tweet(prefix + ' ' + text, reply_to=tweet)
-        # print "on_mention: " + prefix + ' ' + text
-
-        # text = function_that_returns_a_string_goes_here()
-        # prefixed_text = prefix + ' ' + text
-        # self.post_tweet(prefix + ' ' + text, reply_to=tweet)
-
-        # call this to fav the tweet!
-        # if something:
-        #     self.favorite_tweet(tweet)
 
 
     def on_timeline(self, tweet, prefix):
@@ -163,17 +150,8 @@ class EstelaVadal(TwitterBot):
         """
 
         text = self.get_poetic_line()
-        prefixed_text = prefix + ' ' + text
         self.post_tweet(prefix + ' ' + text, reply_to=tweet)
-        # print "on_timeline: " + prefix + ' ' + text
 
-        # text = function_that_returns_a_string_goes_here()
-        # prefixed_text = prefix + ' ' + text
-        # self.post_tweet(prefix + ' ' + text, reply_to=tweet)
-
-        # call this to fav the tweet!
-        # if something:
-        #     self.favorite_tweet(tweet)
 
     def is_sentence_valid(self, sentence):
         sentence_temp = str(sentence)
@@ -231,14 +209,8 @@ class EstelaVadal(TwitterBot):
         )
         raw_poetry = rnn_proc.stdout.read().decode('utf8')
 
-        # print "RAW OUTPUT:"
-        # print repr(raw_poetry)
-        
         raw_poetry_per_line = filter(lambda y: y, map(lambda x: x.strip(), raw_poetry.split(u'\n')))
-        
-        # print "LINES:"
-        # print repr(raw_poetry_per_line)
-        
+
         chars_remaining = self.config['MAX_TWEET_LENGTH']
 
         # let's build our tweet
@@ -248,13 +220,10 @@ class EstelaVadal(TwitterBot):
             if len(raw_poetry_per_line) == i+1:
                 break
                 
-            # if we still have space, append
+            # check if line is tweetable
             if i >= self.config['NUM_SKIP_LINES'] and self.config['MAX_TWEET_LENGTH'] >= len(line):
                 if self.is_sentence_valid(line):
                     poetic_lines.append(u''+line)
-
-        # print "TWEETS:"
-        # print repr(poetic_lines)
 
         # Back to original working directory
         os.chdir(self.config['SCRIPT_PATH'])
@@ -262,16 +231,17 @@ class EstelaVadal(TwitterBot):
         return poetic_lines
 
     def get_poetic_line(self):
-        # reset queue if we've used every queued item
+        # reset queue and counter if queue is empty
         if(self.state['lines_of_poetry_counter'] >= len(self.state['lines_of_poetry'])):
             self.state['lines_of_poetry'] = []
             self.state['lines_of_poetry_counter'] = 0
 
+        # generate lines if queue is empty
         while (len(self.state['lines_of_poetry']) == 0):
-            # print "GENERATING POETRY..."
             self.state['lines_of_poetry'] = self.generate_poetry()
             self.state['lines_of_poetry_counter'] = 0
 
+        # return a line and update the counter
         current_index = self.state['lines_of_poetry_counter']
         current_poetic_line = self.state['lines_of_poetry'][current_index]
         self.state['lines_of_poetry_counter'] += 1
