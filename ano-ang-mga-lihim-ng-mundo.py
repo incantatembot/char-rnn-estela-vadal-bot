@@ -17,7 +17,7 @@ config = {}
 config['SCRIPT_PATH'] = '/home/estelavadal'
 config['CHARRNN_PATH'] = '/home/estelavadal/char-rnn'
 config['RNN_MODEL_PATH'] = '/home/estelavadal/models/estela.v.810.t7'
-config['MAX_LINE_LENGTH'] = 500
+config['MAX_LINE_LENGTH'] = 200
 config['NUM_SKIP_LINES'] = 1
 
 config['VALID_WORDS'] = []
@@ -68,7 +68,7 @@ def generate_poetry():
         'sample.lua',
         config['RNN_MODEL_PATH'],
         '-length',
-        '2048',
+        '10000',
         '-verbose',
         '0',
         '-temperature',

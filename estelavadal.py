@@ -85,6 +85,7 @@ class EstelaVadal(TwitterBot):
         # not loading a previous saved state.
         self.state['lines_of_poetry'] = []
         self.state['lines_of_poetry_counter'] = 0
+        self.state['seed_text'] = ''
 
         # You can also add custom functions that run at regular intervals
         # using self.register_custom_handler(function, interval).
@@ -96,7 +97,6 @@ class EstelaVadal(TwitterBot):
         
         # self.register_custom_handler(self.my_function, 60 * 60 * 24)
 
-
     def on_scheduled_tweet(self):
         """
         Make a public tweet to the bot's own timeline.
@@ -107,7 +107,6 @@ class EstelaVadal(TwitterBot):
         """
         text = self.get_poetic_line()
         self.post_tweet(text)
-
 
     def on_mention(self, tweet, prefix):
         """
@@ -130,7 +129,6 @@ class EstelaVadal(TwitterBot):
         text = self.get_poetic_line()
         self.post_tweet(prefix + ' ' + text, reply_to=tweet)
 
-
     def on_timeline(self, tweet, prefix):
         """
         Defines actions to take on a timeline tweet.
@@ -149,9 +147,6 @@ class EstelaVadal(TwitterBot):
         Twitter won't count it as a reply.
         """
 
-        text = self.get_poetic_line()
-        self.post_tweet(prefix + ' ' + text, reply_to=tweet)
-
 
     def is_sentence_valid(self, sentence):
         sentence_temp = str(sentence)
@@ -163,7 +158,7 @@ class EstelaVadal(TwitterBot):
         # compare against our dictionary
         for word in word_list:
             if word not in self.config['VALID_WORDS']: 
-                print("Invalid word found: [" + str(word) + "] in: [" + str(sentence) + "]")
+                self.log('Invalid word found:: ["{}"] in ["{}"]'.format(word, sentence))
                 return False
 
         return True
@@ -174,6 +169,9 @@ class EstelaVadal(TwitterBot):
         seedTextB = ''.join([random.choice(unique_chars_list) for n in xrange(randint(2, 7))])
         seedTextC = ''.join([random.choice(unique_chars_list) for n in xrange(randint(2, 7))])
         seedText = seedTextA + ' ' + seedTextB + ' ' + seedTextC
+
+        if 0 < len(self.state['seed_text']):
+            seedText = self.state['seed_text']
         
         # generate temperature from 0.4000 to 0.6999
         tempA = float(randint(4, 6))
@@ -182,8 +180,8 @@ class EstelaVadal(TwitterBot):
         tempD = float(randint(0, 9))
         temperature = float(0.0 + tempA/10 + tempB/100 + tempC/1000 + tempD/10000)
 
-        print "Seed Text:\t", seedText
-        print "Temperature:\t", str(temperature)
+        self.log('Seed Text: "{}"'.format(seedText))
+        self.log('Temperature: "{}"'.format(temperature))
 
         os.chdir(self.config['CHARRNN_PATH'])
 
@@ -192,7 +190,7 @@ class EstelaVadal(TwitterBot):
             'sample.lua',
             self.config['RNN_MODEL_PATH'],
             '-length',
-            '2048',
+            '10000',
             '-verbose',
             '0',
             '-temperature',
@@ -210,7 +208,6 @@ class EstelaVadal(TwitterBot):
         raw_poetry = rnn_proc.stdout.read().decode('utf8')
 
         raw_poetry_per_line = filter(lambda y: y, map(lambda x: x.strip(), raw_poetry.split(u'\n')))
-
         chars_remaining = self.config['MAX_TWEET_LENGTH']
 
         # let's build our tweet
@@ -220,7 +217,7 @@ class EstelaVadal(TwitterBot):
             if len(raw_poetry_per_line) == i+1:
                 break
                 
-            # check if line is tweetable
+            # if we still have space, append
             if i >= self.config['NUM_SKIP_LINES'] and self.config['MAX_TWEET_LENGTH'] >= len(line):
                 if self.is_sentence_valid(line):
                     poetic_lines.append(u''+line)
@@ -231,7 +228,7 @@ class EstelaVadal(TwitterBot):
         return poetic_lines
 
     def get_poetic_line(self):
-        # reset queue and counter if queue is empty
+        # reset queue if we've used every queued item
         if(self.state['lines_of_poetry_counter'] >= len(self.state['lines_of_poetry'])):
             self.state['lines_of_poetry'] = []
             self.state['lines_of_poetry_counter'] = 0
@@ -244,6 +241,7 @@ class EstelaVadal(TwitterBot):
         # return a line and update the counter
         current_index = self.state['lines_of_poetry_counter']
         current_poetic_line = self.state['lines_of_poetry'][current_index]
+        self.state['seed_text'] = current_poetic_line
         self.state['lines_of_poetry_counter'] += 1
         return current_poetic_line
 
