@@ -1,11 +1,11 @@
 # facebook-chatbot-python
-A simple python chatbot for Facebook Messenger forked from [facebook-chatbot-python] (https://github.com/hult/facebook-chatbot-python).
+A simple python chatbot for Facebook Messenger forked from [facebook-chatbot-python](https://github.com/hult/facebook-chatbot-python).
 
 The bot reads incoming Facebook Messenger messages, and responds by picking lines from generated random text via its neural network engine.
 
 ## Installing dependencies
 
-Use of virtualenv is highly recommended, especially since the old version of `nltk` used requires an old version of `setuptools`.
+Use of virtualenv is highly recommended.
 
     $ pip install -r requirements.txt
 
