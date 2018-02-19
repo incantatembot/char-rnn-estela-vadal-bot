@@ -29,3 +29,5 @@ To generate text:
 To run the Twitter bot:
 
     $ python estelavadal.py
+
+To run a Facebook chatbot, please folow the instructions on the [facebook-chatbot folder](https://github.com/matangkuwago/char-rnn-estela-vadal-bot/tree/master/facebook-chatbot).
